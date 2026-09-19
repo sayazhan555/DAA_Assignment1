@@ -302,3 +302,40 @@ The ratio results were generally consistent with the expected asymptotic growth 
 The experiment also showed that real execution time can be different from theoretical complexity because of JVM warm-up, garbage collection, CPU cache and other implementation details.
 
 Overall, the benchmark gave results that were consistent with the expected behaviour of the Divide-and-Conquer algorithms.
+
+
+## Bonus A — Deterministic Select (Median of Medians)
+
+I implemented Deterministic Select using the Median of Medians method.
+
+The array is divided into groups of five elements. Each group is sorted using
+Insertion Sort, and the median of each group is selected. Then the median of
+these medians is used as a pivot. This gives a guaranteed O(n) worst-case
+running time.
+
+I compared Deterministic Select with QuickSelect on random and sorted arrays.
+
+| Algorithm | Input | n | Time (ms) | Comparisons |
+|-----------|-------|---:|----------:|------------:|
+| QuickSelect | random | 1000 | 0.9575 | 7501 |
+| DeterministicSelect | random | 1000 | 0.4431 | 6695 |
+| QuickSelect | sorted | 1000 | 0.1067 | 4821 |
+| DeterministicSelect | sorted | 1000 | 0.3625 | 13325 |
+| QuickSelect | random | 10000 | 0.6311 | 27421 |
+| DeterministicSelect | random | 10000 | 1.4899 | 68402 |
+| QuickSelect | sorted | 10000 | 0.9575 | 40114 |
+| DeterministicSelect | sorted | 10000 | 2.1863 | 65732 |
+| QuickSelect | random | 100000 | 2.2392 | 355258 |
+| DeterministicSelect | random | 100000 | 3.1967 | 689285 |
+| QuickSelect | sorted | 100000 | 0.4915 | 348923 |
+| DeterministicSelect | sorted | 100000 | 5.3989 | 2736308 |
+
+The results show that QuickSelect is usually faster and uses fewer
+comparisons on these tested inputs. Deterministic Select performs more work
+because it has to find a good pivot using the Median of Medians procedure.
+However, its main advantage is the guaranteed O(n) worst-case running time,
+while QuickSelect has O(n²) worst-case time if its pivots are repeatedly poor.
+
+The tests also confirmed that Deterministic Select returns the same result as
+the sorted array for random test cases, sorted arrays and arrays with
+duplicates.
