@@ -20,6 +20,7 @@ public class Benchmark {
             "duplicates"
     };
 
+    private static final int WARMUP_RUNS = 2;
     private static final int RUNS = 5;
 
     public static void main(String[] args) throws IOException {
@@ -78,14 +79,19 @@ public class Benchmark {
             int[] original,
             String inputType) throws IOException {
 
+        // JVM warm-up
+        for (int run = 0; run < WARMUP_RUNS; run++) {
+            int[] array = original.clone();
+            MergeSort.sort(array);
+        }
+
         long[] times = new long[RUNS];
-        long comparisons = 0;
-        int maxDepth = 0;
+        long[] comparisons = new long[RUNS];
+        int[] depths = new int[RUNS];
 
         for (int run = 0; run < RUNS; run++) {
 
             int[] array = original.clone();
-
             Metrics metrics = new Metrics();
 
             metrics.startTimer();
@@ -95,19 +101,21 @@ public class Benchmark {
             metrics.stopTimer();
 
             times[run] = metrics.getTimeNs();
-            comparisons = metrics.getComparisons();
-            maxDepth = metrics.getMaxDepth();
+            comparisons[run] = metrics.getComparisons();
+            depths[run] = metrics.getMaxDepth();
         }
 
-        long median = getMedian(times);
+        long medianTime = getMedian(times);
+        long medianComparisons = getMedian(comparisons);
+        int maxDepth = getMax(depths);
 
         writeResult(
                 writer,
                 "MergeSort",
                 inputType,
                 original.length,
-                median,
-                comparisons,
+                medianTime,
+                medianComparisons,
                 maxDepth
         );
     }
@@ -117,14 +125,19 @@ public class Benchmark {
             int[] original,
             String inputType) throws IOException {
 
+        // JVM warm-up
+        for (int run = 0; run < WARMUP_RUNS; run++) {
+            int[] array = original.clone();
+            QuickSort.sort(array);
+        }
+
         long[] times = new long[RUNS];
-        long comparisons = 0;
-        int maxDepth = 0;
+        long[] comparisons = new long[RUNS];
+        int[] depths = new int[RUNS];
 
         for (int run = 0; run < RUNS; run++) {
 
             int[] array = original.clone();
-
             Metrics metrics = new Metrics();
 
             metrics.startTimer();
@@ -134,19 +147,21 @@ public class Benchmark {
             metrics.stopTimer();
 
             times[run] = metrics.getTimeNs();
-            comparisons = metrics.getComparisons();
-            maxDepth = metrics.getMaxDepth();
+            comparisons[run] = metrics.getComparisons();
+            depths[run] = metrics.getMaxDepth();
         }
 
-        long median = getMedian(times);
+        long medianTime = getMedian(times);
+        long medianComparisons = getMedian(comparisons);
+        int maxDepth = getMax(depths);
 
         writeResult(
                 writer,
                 "QuickSort",
                 inputType,
                 original.length,
-                median,
-                comparisons,
+                medianTime,
+                medianComparisons,
                 maxDepth
         );
     }
@@ -156,16 +171,21 @@ public class Benchmark {
             int[] original,
             String inputType) throws IOException {
 
-        long[] times = new long[RUNS];
-        long comparisons = 0;
-        int maxDepth = 0;
-
         int k = original.length / 2;
+
+        // JVM warm-up
+        for (int run = 0; run < WARMUP_RUNS; run++) {
+            int[] array = original.clone();
+            QuickSelect.select(array, k);
+        }
+
+        long[] times = new long[RUNS];
+        long[] comparisons = new long[RUNS];
+        int[] depths = new int[RUNS];
 
         for (int run = 0; run < RUNS; run++) {
 
             int[] array = original.clone();
-
             Metrics metrics = new Metrics();
 
             metrics.startTimer();
@@ -175,19 +195,21 @@ public class Benchmark {
             metrics.stopTimer();
 
             times[run] = metrics.getTimeNs();
-            comparisons = metrics.getComparisons();
-            maxDepth = metrics.getMaxDepth();
+            comparisons[run] = metrics.getComparisons();
+            depths[run] = metrics.getMaxDepth();
         }
 
-        long median = getMedian(times);
+        long medianTime = getMedian(times);
+        long medianComparisons = getMedian(comparisons);
+        int maxDepth = getMax(depths);
 
         writeResult(
                 writer,
                 "QuickSelect",
                 inputType,
                 original.length,
-                median,
-                comparisons,
+                medianTime,
+                medianComparisons,
                 maxDepth
         );
     }
@@ -199,6 +221,19 @@ public class Benchmark {
         Arrays.sort(copy);
 
         return copy[copy.length / 2];
+    }
+
+    private static int getMax(int[] values) {
+
+        int max = values[0];
+
+        for (int value : values) {
+            if (value > max) {
+                max = value;
+            }
+        }
+
+        return max;
     }
 
     private static void writeResult(
