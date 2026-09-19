@@ -3,6 +3,8 @@ package algorithms;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import java.util.Arrays;
+import java.util.Random;
 
 public class QuickSelectTest {
 
@@ -53,4 +55,28 @@ public class QuickSelectTest {
                 () -> QuickSelect.select(array, 0)
         );
     }
+
+    @Test
+    void testRandomArrays() {
+        Random random = new Random(42);
+
+        for (int test = 0; test < 100; test++) {
+            int size = random.nextInt(100) + 1;
+            int[] array = new int[size];
+
+            for (int i = 0; i < size; i++) {
+                array[i] = random.nextInt(1000) - 500;
+            }
+
+            int[] expected = array.clone();
+            Arrays.sort(expected);
+
+            int k = random.nextInt(size);
+
+            int result = QuickSelect.select(array.clone(), k);
+
+            assertEquals(expected[k], result);
+        }
+    }
+
 }

@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class QuickSortTest {
 
@@ -32,6 +33,8 @@ public class QuickSortTest {
     }
 
 
+
+
     @Test
     void testEdgeCases() {
         int[] empty = {};
@@ -49,5 +52,26 @@ public class QuickSortTest {
         int[] sorted = {1, 2, 3, 4, 5};
         QuickSort.sort(sorted);
         assertArrayEquals(new int[]{1, 2, 3, 4, 5}, sorted);
+    }
+
+    @Test
+    void testSortedArrayDepth() {
+        int n = 100_000;
+        int[] array = new int[n];
+
+        for (int i = 0; i < n; i++) {
+            array[i] = i;
+        }
+
+        Metrics metrics = new Metrics();
+
+        QuickSort.sort(array, metrics);
+
+        int limit = (int) (2 * (Math.log(n) / Math.log(2)));
+
+        System.out.println("Max depth: " + metrics.getMaxDepth());
+        System.out.println("Allowed depth: " + limit);
+
+        assertTrue(metrics.getMaxDepth() <= limit);
     }
 }
