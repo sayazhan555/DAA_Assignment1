@@ -2,43 +2,69 @@ package algorithms;
 
 public class QuickSort {
 
+    // Old method — keeps existing tests working
     public static void sort(int[] array) {
+        sort(array, new Metrics());
+    }
+
+    // New method with Metrics
+    public static void sort(int[] array, Metrics metrics) {
         if (array == null || array.length < 2) {
             return;
         }
 
-        quickSort(array, 0, array.length - 1);
+        quickSort(array, 0, array.length - 1, metrics);
     }
 
-    private static void quickSort(int[] array, int left, int right) {
-        if (left >= right) {
-            return;
-        }
+    private static void quickSort(int[] array, int left, int right,
+                                  Metrics metrics) {
 
-        int pivotIndex = partition(array, left, right);
+        metrics.enterRecursion();
 
-        quickSort(array, left, pivotIndex - 1);
-        quickSort(array, pivotIndex + 1, right);
-    }
-
-    private static int partition(int[] array, int left, int right) {
-        int pivot = array[right];
-        int i = left - 1;
-
-        for (int j = left; j < right; j++) {
-            if (array[j] <= pivot) {
-                i++;
-
-                int temp = array[i];
-                array[i] = array[j];
-                array[j] = temp;
+        try {
+            if (left >= right) {
+                return;
             }
+
+            int pivot = array[left + (right - left) / 2];
+
+            int less = left;
+            int current = left;
+            int greater = right;
+
+            while (current <= greater) {
+
+                metrics.addComparison();
+
+                if (array[current] < pivot) {
+                    swap(array, less, current);
+                    less++;
+                    current++;
+
+                } else {
+
+                    metrics.addComparison();
+
+                    if (array[current] > pivot) {
+                        swap(array, current, greater);
+                        greater--;
+
+                    } else {
+                        current++;
+                    }
+                }
+            }
+
+            quickSort(array, left, less - 1, metrics);
+            quickSort(array, greater + 1, right, metrics);
+        } finally {
+            metrics.exitRecursion();
         }
+    }
 
-        int temp = array[i + 1];
-        array[i + 1] = array[right];
-        array[right] = temp;
-
-        return i + 1;
+    private static void swap(int[] array, int i, int j) {
+        int temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
     }
 }

@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 public class QuickSortTest {
 
+
     @Test
     void testRandomArrays() {
         Random random = new Random(42);
@@ -29,6 +30,7 @@ public class QuickSortTest {
             assertArrayEquals(expected, array);
         }
     }
+
 
     @Test
     void testEdgeCases() {
