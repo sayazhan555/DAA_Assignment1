@@ -7,8 +7,8 @@ The table below shows the time complexity of the algorithms used in this assignm
 | Algorithm | Best Case | Average Case | Worst Case |
 |---|---|---|---|
 | MergeSort | Θ(n log n) — the array is divided into two parts and then merged | Θ(n log n) — the same process is repeated for all parts | Θ(n log n) — the array still has to be divided and merged |
-| QuickSort | Θ(n log n) — the pivot divides the array into balanced parts | Θ(n log n) — random pivots usually give good partitions | O(n²) — the pivot can repeatedly give very unbalanced parts |
-| QuickSelect | Θ(n) — the required element can be found after one partition | Θ(n) — only one part of the array is processed | O(n²) — the partitions can be very unbalanced |
+| QuickSort | Θ(n log n) — the pivot divides the array into balanced parts | Θ(n log n) — QuickSort has average Θ(n log n) time because random pivots usually create balanced partitions. | Θ(n²) — the pivot can repeatedly give very unbalanced parts |
+| QuickSelect | Θ(n) — the pivot can place the k-th element in the correct position after one partition | Θ(n) — on average, the pivot reduces the search range substantially | Θ(n²) — the partitions can be very unbalanced |
 | Insertion Sort | Θ(n) — the array is already sorted | Θ(n²) — elements may need to be moved several times | Θ(n²) — reverse sorted input causes many shifts |
 
 MergeSort does not depend much on the original order of the elements. It always divides the array and then merges the sorted parts.
@@ -59,6 +59,10 @@ Here:
 - b = 2
 - f(n) = Θ(n)
 
+This is Case 2 of the Master Theorem.
+
+Result: Θ(n log n)
+
 Using the Master Theorem gives:
 
 T(n) = Θ(n log n)
@@ -85,11 +89,12 @@ We have:
 
 n^(log₂1) = 1
 
-The linear partitioning work is larger than this value, so the result is:
+Since f(n) = Θ(n) grows polynomially faster than n^(log₂1) = 1,
+this is Case 3 of the Master Theorem.
+
+Therefore:
 
 T(n) = Θ(n)
-
-This explains why QuickSelect can be faster than sorting when we only need one k-th smallest element.
 
 ## 3. Benchmark Results
 
@@ -120,7 +125,7 @@ QuickSelect was much faster in this case. Its time was about 10.6 ms because it 
 
 The input type also changes the results. QuickSort worked especially well with duplicate values. For 1,000,000 duplicate-heavy elements, its measured time was about 9.2 ms.
 
-The graph shows that increasing the input size increases the running time of all three algorithms, but not at the same rate.
+The graph shows that the running time increases as the input size grows, while the growth rate differs between the algorithms.
 
 ### 3.2 Maximum Recursion Depth vs n
 
@@ -222,9 +227,8 @@ For random input, a rough experimental choice is:
 - c2 ≈ 2.1
 - n0 = 10,000
 
-The ratio stays in a relatively stable range instead of increasing together with n. This is consistent with the expected average Θ(n log n) behaviour of QuickSort with random pivot selection.
-
-The exact ratio is different for each input type because the number of comparisons depends on the partitioning.
+These values are only experimental estimates based on the measured data
+and do not constitute a mathematical proof of the Θ bound.
 
 ### QuickSelect
 
